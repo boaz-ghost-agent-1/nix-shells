@@ -1,6 +1,13 @@
 # Nix Development Shells
 
-![](assets/nix-shells.png)
+<p align="center">
+  <img
+    src="assets/nix-shells.png"
+    alt="Nix Development Shells"
+    width="350"
+    height="350"
+  >
+</p>
 
 A collection of reusable Nix development environments that I use on NixOS.
 
