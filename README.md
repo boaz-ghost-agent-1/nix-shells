@@ -29,6 +29,77 @@ toolchain, or use case.
 The root `shell.nix` is used to maintain this repository itself and provides
 the formatting and linting tools used by the `Makefile`.
 
+## NixOS System Requirements
+
+Some development environments require system-level NixOS configuration that
+cannot be provided by a `shell.nix` alone.
+
+### Docker
+
+To use Docker, enable the Docker service and add your user to the `docker`
+group in `/etc/nixos/configuration.nix`:
+
+```nix
+virtualisation.docker.enable = true;
+
+users.users.<username>.extraGroups = [
+  "docker"
+];
+```
+
+If you already define `extraGroups` for your user, simply add `"docker"` to
+the existing list:
+
+```nix
+users.users.<username> = {
+  isNormalUser = true;
+  extraGroups = [
+    "networkmanager"
+    "wheel"
+    "docker"
+  ];
+};
+```
+
+Apply the configuration:
+
+```bash
+sudo nixos-rebuild switch
+```
+
+You may need to log out and back in for the new group membership to take
+effect.
+
+Verify Docker is working:
+
+```bash
+docker run --rm hello-world
+```
+
+### Pre-compiled Binaries / `uv`
+
+Some development tools distribute pre-compiled dynamically linked binaries
+that may not run directly on NixOS.
+
+Enable `nix-ld` in `/etc/nixos/configuration.nix`:
+
+```nix
+programs.nix-ld.enable = true;
+```
+
+Then apply the configuration:
+
+```bash
+sudo nixos-rebuild switch
+```
+
+This can be useful when using externally distributed binaries, including
+tools installed outside of Nix.
+
+> `uv` itself does not require `nix-ld` when installed through Nix. This
+> configuration is primarily useful when running pre-compiled binaries that
+> expect a conventional Linux dynamic linker.
+
 ## Available Shells
 
 ### Core
